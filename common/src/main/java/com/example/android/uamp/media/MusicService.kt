@@ -52,6 +52,7 @@ import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -84,19 +85,10 @@ open class MusicService : MediaBrowserServiceCompat() {
     protected lateinit var mediaController: MediaControllerCompat
     protected lateinit var mediaSessionConnector: MediaSessionConnector
 
-    /**
-     * This must be `by lazy` because the source won't initially be ready.
-     * See [MusicService.onLoadChildren] to see where it's accessed (and first
-     * constructed).
-     */
-    private val browseTree: BrowseTree by lazy {
-        BrowseTree(applicationContext, mediaSource)
-    }
-
     private var isForegroundService = false
 
     private val remoteJsonSource: Uri =
-        Uri.parse("https://storage.googleapis.com/uamp/catalog.json")
+        Uri.parse("https://www.besset.be/catalog.json")
 
     private val uAmpAudioAttributes = AudioAttributes.Builder()
         .setContentType(C.CONTENT_TYPE_MUSIC)
@@ -163,8 +155,9 @@ open class MusicService : MediaBrowserServiceCompat() {
         // ExoPlayer will manage the MediaSession for us.
         mediaSessionConnector = MediaSessionConnector(mediaSession).also { connector ->
             // Produces DataSource instances through which media data is loaded.
-            val dataSourceFactory = DefaultDataSourceFactory(
-                this, Util.getUserAgent(this, UAMP_USER_AGENT), null
+            val dataSourceFactory = DefaultHttpDataSourceFactory(
+                Util.getUserAgent(this, UAMP_USER_AGENT),
+                null
             )
 
             // Create the PlaybackPreparer of the media session connector.
@@ -228,7 +221,7 @@ open class MusicService : MediaBrowserServiceCompat() {
         val rootExtras = Bundle().apply {
             putBoolean(
                 MEDIA_SEARCH_SUPPORTED,
-                isKnownCaller || browseTree.searchableByUnknownCaller
+                isKnownCaller/* || browseTree.searchableByUnknownCaller*/
             )
             putBoolean(CONTENT_STYLE_SUPPORTED, true)
             putInt(CONTENT_STYLE_BROWSABLE_HINT, CONTENT_STYLE_GRID)
@@ -265,7 +258,7 @@ open class MusicService : MediaBrowserServiceCompat() {
         // If the media source is ready, the results will be set synchronously here.
         val resultsSent = mediaSource.whenReady { successfullyInitialized ->
             if (successfullyInitialized) {
-                val children = browseTree[parentMediaId]?.map { item ->
+                val children = mediaSource.map { item ->
                     MediaItem(item.description, item.flag)
                 }
                 result.sendResult(children)

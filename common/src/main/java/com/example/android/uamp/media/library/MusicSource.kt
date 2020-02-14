@@ -30,26 +30,10 @@ import com.example.android.uamp.media.extensions.containsCaseInsensitive
 import com.example.android.uamp.media.extensions.genre
 import com.example.android.uamp.media.extensions.title
 
-/**
- * Interface used by [MusicService] for looking up [MediaMetadataCompat] objects.
- *
- * Because Kotlin provides methods such as [Iterable.find] and [Iterable.filter],
- * this is a convient interface to have on sources.
- */
 interface MusicSource : Iterable<MediaMetadataCompat> {
 
-    /**
-     * Begins loading the data for this music source.
-     */
     suspend fun load()
 
-    /**
-     * Method which will perform a given action after this [MusicSource] is ready to be used.
-     *
-     * @param performAction A lambda expression to be called with a boolean parameter when
-     * the source is ready. `true` indicates the source was successfully prepared, `false`
-     * indicates an error occurred.
-     */
     fun whenReady(performAction: (Boolean) -> Unit): Boolean
 
     fun search(query: String, extras: Bundle): List<MediaMetadataCompat>
