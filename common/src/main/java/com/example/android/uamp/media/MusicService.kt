@@ -37,12 +37,8 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.media.MediaBrowserServiceCompat
 import com.example.android.uamp.media.extensions.flag
-import com.example.android.uamp.media.library.BrowseTree
 import com.example.android.uamp.media.library.JsonSource
-import com.example.android.uamp.media.library.MEDIA_SEARCH_SUPPORTED
 import com.example.android.uamp.media.library.MusicSource
-import com.example.android.uamp.media.library.UAMP_BROWSABLE_ROOT
-import com.example.android.uamp.media.library.UAMP_EMPTY_ROOT
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ExoPlayerFactory
@@ -51,7 +47,6 @@ import com.google.android.exoplayer2.Timeline
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import kotlinx.coroutines.CoroutineScope
@@ -247,8 +242,7 @@ open class MusicService : MediaBrowserServiceCompat() {
 
     /**
      * Returns (via the [result] parameter) a list of [MediaItem]s that are child
-     * items of the provided [parentMediaId]. See [BrowseTree] for more details on
-     * how this is build/more details about the relationships.
+     * items of the provided [parentMediaId].
      */
     override fun onLoadChildren(
         parentMediaId: String,
@@ -467,3 +461,8 @@ private const val CONTENT_STYLE_LIST = 1
 private const val CONTENT_STYLE_GRID = 2
 
 private const val UAMP_USER_AGENT = "uamp.next"
+
+private const val UAMP_BROWSABLE_ROOT = "/"
+private const val UAMP_EMPTY_ROOT = "@empty@"
+
+private const val MEDIA_SEARCH_SUPPORTED = "android.media.browse.SEARCH_SUPPORTED"

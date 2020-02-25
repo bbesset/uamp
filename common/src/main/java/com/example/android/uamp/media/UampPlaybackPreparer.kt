@@ -23,17 +23,14 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
-import com.example.android.uamp.media.extensions.album
 import com.example.android.uamp.media.extensions.id
 import com.example.android.uamp.media.extensions.toMediaSource
-import com.example.android.uamp.media.extensions.trackNumber
 import com.example.android.uamp.media.library.AbstractMusicSource
 import com.example.android.uamp.media.library.MusicSource
 import com.google.android.exoplayer2.ControlDispatcher
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
-import com.google.android.exoplayer2.source.hls.HlsMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
 
 /**
@@ -112,17 +109,6 @@ class UampPlaybackPreparer(
         extras: Bundle?,
         cb: ResultReceiver?
     ) = false
-
-    /**
-     * Builds a playlist based on a [MediaMetadataCompat].
-     *
-     * TODO: Support building a playlist by artist, genre, etc...
-     *
-     * @param item Item to base the playlist on.
-     * @return a [List] of [MediaMetadataCompat] objects representing a playlist.
-     */
-    private fun buildPlaylist(item: MediaMetadataCompat): List<MediaMetadataCompat> =
-            musicSource.filter { it.album == item.album }.sortedBy { it.trackNumber }
 }
 
 private const val TAG = "MediaSessionHelper"
